@@ -12,13 +12,18 @@ export class BucketService {
     private cryptorService: CryptService,
   ) {}
 
-  public async create() {
+  public async create(data: string) {
     return await this.contactRepository.save({
-      bucket: this.cryptorService.encrypt(`djsoadjsaoijdois`),
+      bucket: await this.cryptorService.encrypt(data),
     });
   }
 
-  public async list() {
-    return this.contactRepository.find();
+  public async list(): Promise<Bucket[]> {
+    return Promise.all(
+      (await this.contactRepository.find()).map(async (value: any) => ({
+        ...value,
+        bucket: await this.cryptorService.decrypt(value.bucket),
+      })),
+    );
   }
 }
