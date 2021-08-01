@@ -1,0 +1,11 @@
+version: "3.5"
+services: 
+    backend:
+        image: node:14.17.4
+        ports: 
+            -  3000:3000
+        volumes: 
+            - ./src/:/var/www/
+        tty: true
+        user: 1000:1000
+        
