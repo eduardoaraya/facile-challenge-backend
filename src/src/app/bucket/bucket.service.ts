@@ -1,13 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { CryptService } from '../crypt/crypt.service';
 import { Bucket } from './model/bucket.entity';
+import { BucketRepositoryName } from './model/bucket.repository';
 
 @Injectable()
 export class BucketService {
   public constructor(
-    @InjectRepository(Bucket)
+    @Inject(BucketRepositoryName)
     private contactRepository: Repository<Bucket>,
     private cryptorService: CryptService,
   ) {}

@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { BucketService } from './bucket.service';
-import { Bucket } from './model/bucket.entity';
 import { BucketController } from './bucket.controller';
 import { CryptService } from '../crypt/crypt.service';
-
+import { BucketRepository } from './model/bucket.repository';
+import { DatabaseModule } from '../database/db.module';
 @Module({
-  imports: [TypeOrmModule.forFeature([Bucket])],
+  imports: [DatabaseModule],
   controllers: [BucketController],
-  providers: [BucketService, CryptService],
+  providers: [BucketRepository, BucketService, CryptService],
 })
 export class BucketModule {}

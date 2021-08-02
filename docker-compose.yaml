@@ -1,11 +1,27 @@
 version: "3.5"
-services: 
-    backend:
-        image: node:14.17.4
-        ports: 
-            -  3000:3000
-        volumes: 
-            - ./src/:/var/www/
-        tty: true
-        user: 1000:1000
-        
+services:
+  backend:
+    image: node:14.17.4
+    ports:
+      - 3000:3000
+    volumes:
+      - ./src/:/var/www/
+    tty: true
+    user: 1000:1000
+    depends_on:
+      - database
+    networks:
+      - backend
+  database:
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: root
+      POSTGRES_USER: postgres
+      POSTGRES_DB: faciledb
+    ports:
+      - 5432:5432
+    networks:
+      - backend
+networks:
+  backend:
+    driver: bridge
