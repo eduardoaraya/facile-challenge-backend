@@ -1,28 +1,26 @@
-import { Controller, Get, HttpStatus, Post, Req, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  ParseIntPipe,
+  Post,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { Response, Request } from 'express';
 import { BucketService } from './bucket.service';
-
-enum BuckerMessageErrosEnum {
-  E_VALIDATE_FAILURE = 'data_validation_error',
-  INTERNAL_SERVER_ERROR = 'internal_error',
-}
-
-const BuckerMessageErros = {
-  [BuckerMessageErrosEnum.E_VALIDATE_FAILURE]: {
-    message: "O campo 'data' obrigatório",
-    code: 'E_VALIDATE_FAILURE',
-  },
-  [BuckerMessageErrosEnum.INTERNAL_SERVER_ERROR]: {
-    message: 'Erro interno, tente novamente mais tarde',
-    code: 'INTERNAL_SERVER_ERROR',
-  },
-};
+import {
+  BuckerMessageErros,
+  BuckerMessageErrosEnum,
+  BucketErrors,
+} from './model/errors';
 
 @Controller('bucket')
 export class BucketController {
   public constructor(private bucketService: BucketService) {}
 
-  getError(type: BuckerMessageErrosEnum) {
+  getError(type: BuckerMessageErrosEnum): BucketErrors {
     return BuckerMessageErros[type];
   }
 
@@ -59,6 +57,26 @@ export class BucketController {
   public async list(@Res() res: Response) {
     return res.status(HttpStatus.ACCEPTED).json({
       data: await this.bucketService.list(),
+    });
+  }
+
+  @Get('encrypts/:id')
+  public async find(
+    @Param('id', new ParseIntPipe()) id: number,
+    @Res() res: Response,
+  ) {
+    if (!id || id <= 0) {
+      const { code, message } = this.getError(
+        BuckerMessageErrosEnum.E_LIST_FAILURE,
+      );
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        code,
+        message,
+        statusCode: HttpStatus.BAD_REQUEST,
+      });
+    }
+    return res.status(HttpStatus.ACCEPTED).json({
+      data: await this.bucketService.list(id),
     });
   }
 }

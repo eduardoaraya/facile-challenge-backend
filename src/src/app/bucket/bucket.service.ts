@@ -18,9 +18,9 @@ export class BucketService {
     });
   }
 
-  public async list(): Promise<Bucket[]> {
+  public async list(id: number | null = null): Promise<Bucket[]> {
     return Promise.all(
-      (await this.contactRepository.find()).map(async (value: any) => ({
+      (await this.contactRepository.find({ id })).map(async (value: any) => ({
         ...value,
         bucket: await this.cryptorService.decrypt(value.bucket),
       })),
