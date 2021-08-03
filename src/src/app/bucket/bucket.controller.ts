@@ -41,7 +41,7 @@ export class BucketController {
       if (data instanceof Object) {
         data = JSON.stringify(data);
       }
-      return res.status(HttpStatus.ACCEPTED).json({
+      return res.status(HttpStatus.CREATED).json({
         success: true,
         data: await this.bucketService.create(data),
       });
